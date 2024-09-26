@@ -2,5 +2,13 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+remappings = [
+    "@forge/=lib/forge-std",
+    "@openzeppelin/=lib/openzeppelin-contracts",
+    "@ozu/=lib/openzeppelin-contracts-upgradeable",
+    "@murky/=lib/murky",
+    "@devops/=lib/foundry-devops"
+]
+fs_permissions = []
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

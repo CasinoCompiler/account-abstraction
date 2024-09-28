@@ -3,34 +3,49 @@ pragma solidity 0.8.24;
 
 /**
  * @title
- * @author 
- * @notice 
- * @dev 
+ * @author
+ * @notice
+ * @dev
  */
 
-/** Imports */
+/**
+ * Imports
+ */
 // @Order Imports, Interfaces, Libraries, Contracts
 
 contract ZKSMinimalAccount {
+    /**
+     * Errors
+     */
 
-    /** Errors */   
+    /**
+     * Type Declarations
+     */
 
-    /** Type Declarations */
+    /**
+     * State Variables
+     */
 
-    /** State Variables */
+    /**
+     * Events
+     */
 
-    /** Events */
+    /**
+     * Constructor
+     */
 
-    /** Constructor */
+    /**
+     * Modifiers
+     */
 
-    /** Modifiers */
-
-    /** Functions */
+    /**
+     * Functions
+     */
     // @Order recieve, fallback, external, public, internal, private
-    receive() external payable{}
-    fallback() external payable{}
+    receive() external payable {}
+    fallback() external payable {}
 
-
-    /** Getter Functions */
-
+    /**
+     * Getter Functions
+     */
 }

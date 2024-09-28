@@ -3,12 +3,14 @@ pragma solidity 0.8.24;
 
 /**
  * @title
- * @author 
- * @notice 
- * @dev 
+ * @author
+ * @notice
+ * @dev
  */
 
-/** Imports */
+/**
+ * Imports
+ */
 // @Order Imports, Interfaces, Libraries, Contracts
 import {IAccount} from "lib/account-abstraction/contracts/interfaces/IAccount.sol";
 import {PackedUserOperation} from "lib/account-abstraction/contracts/interfaces/PackedUserOperation.sol";
@@ -19,67 +21,86 @@ import {ECDSA} from "lib/openzeppelin-contracts/contracts/utils/cryptography/ECD
 import {SIG_VALIDATION_FAILED, SIG_VALIDATION_SUCCESS} from "lib/account-abstraction/contracts/core/Helpers.sol";
 
 contract MinimalAccount is IAccount, Ownable {
-
-    /** Errors */
+    /**
+     * Errors
+     */
     error MinimalAccount__NotFromEntryPoint();
     error MinimalAccount__NotFromEntryPointOrOwner();
     error MinimalAccount__CallFailed(bytes);
 
-    /** Type Declarations */
+    /**
+     * Type Declarations
+     */
 
-    /** State Variables */
+    /**
+     * State Variables
+     */
     IEntryPoint private immutable i_entryPoint;
 
-    /** Events */
+    /**
+     * Events
+     */
 
-    /** Constructor */
-    constructor(address entryPointContractAddress) Ownable(msg.sender){
+    /**
+     * Constructor
+     */
+    constructor(address entryPointContractAddress) Ownable(msg.sender) {
         i_entryPoint = IEntryPoint(entryPointContractAddress);
     }
 
-    /** Modifiers */
+    /**
+     * Modifiers
+     */
     modifier requireFromEntryPoint() {
-        if (msg.sender != getEntryPoint()){
+        if (msg.sender != getEntryPoint()) {
             revert MinimalAccount__NotFromEntryPoint();
         }
         _;
     }
 
     modifier requireFromEntryPointOrOwner() {
-        if (msg.sender != getEntryPoint() && msg.sender != owner()){
+        if (msg.sender != getEntryPoint() && msg.sender != owner()) {
             revert MinimalAccount__NotFromEntryPointOrOwner();
-        }        
+        }
         _;
     }
 
-    /** Functions */
+    /**
+     * Functions
+     */
     // @Order recieve, fallback, external, public, internal, private
     receive() external payable {}
 
-    function execute(address targetContractAddress, uint256 value, bytes calldata functionData) external requireFromEntryPointOrOwner{
-        (bool success, bytes memory result) = targetContractAddress.call{value: value}(functionData);
-        if (!success){
+    function execute(address targetContractAddress, uint256 ethValue, bytes calldata functionData)
+        external
+        requireFromEntryPointOrOwner
+    {
+        (bool success, bytes memory result) = targetContractAddress.call{value: ethValue}(functionData);
+        if (!success) {
             revert MinimalAccount__CallFailed(result);
         }
     }
 
-    function validateUserOp(
-        PackedUserOperation calldata userOp,
-        bytes32 userOpHash,
-        uint256 missingAccountFunds
-    ) external  requireFromEntryPoint returns (uint256 validationData) {
+    function validateUserOp(PackedUserOperation calldata userOp, bytes32 userOpHash, uint256 missingAccountFunds)
+        external
+        requireFromEntryPoint
+        returns (uint256 validationData)
+    {
         validationData = _validateSignature(userOp, userOpHash);
         _payAccount(missingAccountFunds);
     }
 
-    function _validateSignature (PackedUserOperation calldata _userOp, bytes32 _userOpHash) internal view returns(uint256 _validationData) {
+    function _validateSignature(PackedUserOperation calldata _userOp, bytes32 _userOpHash)
+        internal
+        view
+        returns (uint256 _validationData)
+    {
         bytes32 ethSignedMessageHash = MessageHashUtils.toEthSignedMessageHash(_userOpHash);
         (address _signer,,) = ECDSA.tryRecover(ethSignedMessageHash, _userOp.signature);
-        if (_signer != owner()){
+        if (_signer != owner()) {
             return SIG_VALIDATION_FAILED;
         }
         return SIG_VALIDATION_SUCCESS;
-
     }
 
     function _payAccount(uint256 _missingAccountFunds) internal {
@@ -88,8 +109,11 @@ contract MinimalAccount is IAccount, Ownable {
             success;
         }
     }
-    /** Getter Functions */
-    function getEntryPoint() public view returns(address){
+    /**
+     * Getter Functions
+     */
+
+    function getEntryPoint() public view returns (address) {
         return address(i_entryPoint);
     }
 }

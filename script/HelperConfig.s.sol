@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import {Script} from "lib/forge-std/src/Script.sol";
+import {Script, console2} from "lib/forge-std/src/Script.sol";
+import {EntryPoint} from "lib/account-abstraction/contracts/core/EntryPoint.sol";
 
 contract HelperConfig is Script {
     error HelperConfig__InvalidChainId();
@@ -29,11 +30,11 @@ contract HelperConfig is Script {
         networkConfigs[ZKSYNC_SEPOLIA_CHAIN_ID] = getZKSyncSepoliaConfig();
     }
 
-    function getConfig() public view returns(NetworkConfig memory){
+    function getConfig() public returns(NetworkConfig memory){
         return getConfigByChainId(block.chainid);
     }
 
-    function getConfigByChainId(uint256 chainId) public view returns(NetworkConfig memory){
+    function getConfigByChainId(uint256 chainId) public returns(NetworkConfig memory){
         if (chainId == LOCAL_CHAIN_ID){
             return getOrCreateAnvilConfig();
         } else if (networkConfigs[chainId].account != address(0)){
@@ -70,17 +71,29 @@ contract HelperConfig is Script {
         ); 
     }
 
-    function getOrCreateAnvilConfig() public view returns (NetworkConfig memory anvilConfig) {
+    function getOrCreateAnvilConfig() public returns (NetworkConfig memory anvilConfig) {
 
         // Ensure an anvil mock address hasn't already been deployed. if it has, return existing config.
         if (activeNetworkConfig.account != address(0)) {
             return (anvilConfig);
         }
+
+        // Deploy mock EntryPoint.sol on anvil
+        console2.log("Deploying Mock EntrypPoint.sol");
+        EntryPoint entryPoint = _createAnvilEntryPoint();
+
         return (
             NetworkConfig({
-                entryPoint: address(0),
+                entryPoint: address(entryPoint),
                 account: ANVIL_WALLET
             })
         ); 
+    }
+
+    function _createAnvilEntryPoint() internal returns(EntryPoint){
+        vm.startBroadcast(ANVIL_WALLET);
+        EntryPoint entryPoint = new EntryPoint();
+        vm.stopBroadcast();
+        return entryPoint;
     }
 }

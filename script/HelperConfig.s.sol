@@ -24,12 +24,13 @@ contract HelperConfig is Script {
     address public constant BURNER_WALLET = 0x9E68306A94f08bcB91F4d2fE3F39CD54eB6E067B;
     address public constant ANVIL_WALLET = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
 
-    NetworkConfig public activeNetworkConfig;
+    // NetworkConfig public activeNetworkConfig;
     mapping(uint256 chainId => NetworkConfig) public networkConfigs;
 
     constructor() {
         networkConfigs[ETH_SEPOLIA_CHAIN_ID] = getEthSepoliaConfig();
         networkConfigs[ZKSYNC_SEPOLIA_CHAIN_ID] = getZKSyncSepoliaConfig();
+        networkConfigs[LOCAL_CHAIN_ID] = getOrCreateAnvilConfig();
     }
 
     function getConfig() public returns (NetworkConfig memory) {
@@ -60,7 +61,7 @@ contract HelperConfig is Script {
 
     function getOrCreateAnvilConfig() public returns (NetworkConfig memory) {
         // Ensure an anvil mock address hasn't already been deployed. if it has, return existing config.
-        if (activeNetworkConfig.account != address(0)) {
+        if (anvilConfig.account != address(0)) {
             return (anvilConfig);
         }
 

@@ -19,12 +19,12 @@ mt:
 #			
 mt-%:
 	@mkdir -p ./test/logs
-	@mkdir -p ./test/logs/failed
+	@mkdir -p ./test/logs/fail
 	@mkdir -p ./test/logs/success
 	@forge test --match-test $* -vvvv > ./test/temp_output.txt 2>&1; \
 	if [ $$? -ne 0 ]; then \
-		mv ./test/temp_output.txt ./test/logs/failed/$*.txt; \
-		echo "Test failed. Log saved in ./test/logs/failed/$*.txt"; \
+		mv ./test/temp_output.txt ./test/logs/fail/$*.txt; \
+		echo "Test failed. Log saved in ./test/logs/fail/$*.txt"; \
 	else \
 		mv ./test/temp_output.txt ./test/logs/success/$*.txt; \
 		echo "Test passed. Log saved in ./test/logs/success/$*.txt"; \

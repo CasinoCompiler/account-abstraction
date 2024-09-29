@@ -10,6 +10,7 @@ out/
 # Directories to ignore
 broadcast/
 lib/
+test/logs/
 
 # Docs
 docs/

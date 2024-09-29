@@ -33,6 +33,9 @@ mt-%:
 		echo "Test passed. Log saved in ./test/logs/success/$*.txt"; \
 	fi
 
+debug:
+	forge test --debug $(filter-out $@,$(MAKECMDGOALS)) -vvvv
+
 # Command to get detailed coverage report.
 report:
 	forge coverage --report debug >debug.txt

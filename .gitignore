@@ -17,5 +17,6 @@ docs/
 # Dotenv file
 .env
 
-# All .txt files
+# misc file types files
 *.txt
+*.png

@@ -82,7 +82,7 @@ contract TestMinimalAccount is Test {
         bytes memory executeCallData =
             abi.encodeWithSelector(minimalAccount.execute.selector, targetContractAddress, ethValue, functionData);
         PackedUserOperation memory packedUserOp =
-            sendPackedUserOp.generateSignedUserOperation(executeCallData, helperConfig.getConfig());
+            sendPackedUserOp.generateSignedUserOperation(executeCallData, helperConfig.getConfig(), address(minimalAccount));
         bytes32 userOperationHash = IEntryPoint(entryPointAddress).getUserOpHash(packedUserOp);
 
         // Act
@@ -101,7 +101,7 @@ contract TestMinimalAccount is Test {
         bytes memory executeCallData =
             abi.encodeWithSelector(minimalAccount.execute.selector, targetContractAddress, ethValue, functionData);
         PackedUserOperation memory packedUserOp =
-            sendPackedUserOp.generateSignedUserOperation(executeCallData, helperConfig.getConfig());
+            sendPackedUserOp.generateSignedUserOperation(executeCallData, helperConfig.getConfig(), address(minimalAccount));
         bytes32 userOperationHash = IEntryPoint(entryPointAddress).getUserOpHash(packedUserOp);
 
         uint256 missingAccountFunds = 1e18;
@@ -122,7 +122,7 @@ contract TestMinimalAccount is Test {
         bytes memory executeCallData =
             abi.encodeWithSelector(minimalAccount.execute.selector, targetContractAddress, ethValue, functionData);
         PackedUserOperation memory packedUserOp =
-            sendPackedUserOp.generateSignedUserOperation(executeCallData, helperConfig.getConfig());
+            sendPackedUserOp.generateSignedUserOperation(executeCallData, helperConfig.getConfig(), address(minimalAccount));
         // bytes32 userOperationHash = IEntryPoint(entryPointAddress).getUserOpHash(packedUserOp);
 
         vm.deal(address(minimalAccount), 1 ether);
@@ -131,6 +131,8 @@ contract TestMinimalAccount is Test {
         ops[0] = packedUserOp;
 
         // Act
+        vm.deal(randomuser, 1 ether);
+        vm.deal(address(minimalAccount), 1 ether);
         vm.prank(randomuser);
         IEntryPoint(entryPointAddress).handleOps(ops, payable(randomuser));
         assertEq(usdc.balanceOf(address(minimalAccount)), AMOUNT);

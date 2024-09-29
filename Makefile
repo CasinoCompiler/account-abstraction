@@ -13,9 +13,14 @@ test:
 mt:
 	forge test --match-test $(filter-out $@,$(MAKECMDGOALS)) -vvvv
 
-mtxt:
-	forge test --match-test $(filter-out $@,$(MAKECMDGOALS)) -vvvv >test.txt
+# Command to capture output in file with name same as %
+# run: 		make mt-test_name
+# *USAGE* 	Error will be returned in CLI as this is primarily used for failing tests.
+#			
+mt-%:
+	-forge test --match-test $* -vvvv >$*.txt
 
+# Command to get detailed coverage report.
 report:
 	forge coverage --report debug >debug.txt
 	python3 debug_refiner.py

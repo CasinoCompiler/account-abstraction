@@ -7,14 +7,15 @@ out/
 /broadcast/*/31337/
 /broadcast/**/dry-run/
 
+# Directories to ignore
+broadcast/
+lib/
+
 # Docs
 docs/
 
 # Dotenv file
 .env
-debug.txt
-summary.txt
-debug-refined.txt
-test.txt
-broadcast/
-lib/
+
+# All .txt files
+*.txt
